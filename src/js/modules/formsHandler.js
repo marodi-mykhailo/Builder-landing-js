@@ -1,20 +1,18 @@
-const formHandler = () => {
+import checkNumInputs from "./checkNumInputs";
+
+const formHandler = (state) => {
 
     const forms = document.querySelectorAll("form"),
         inputs = document.querySelectorAll("input"),
-        phoneInputs = document.querySelectorAll('input[name="user_phone"]');
+        modal = document.querySelector('.popup_calc_end');
+
+    checkNumInputs('input[name="user_phone"]');
 
     const message = {
         loading: 'Загрузка...',
         success: "Спасибо! Скоро мы с вами свяжемся",
         failure: 'Что-то пошло не так...'
     }
-
-    phoneInputs.forEach(item => {
-        item.addEventListener('input', () => {
-            item.value = item.value.replace(/\D/, "");
-        })
-    })
 
     const postData = async (url, data) => {
         document.querySelector('.status').textContent = message.loading;
@@ -30,6 +28,9 @@ const formHandler = () => {
         inputs.forEach(item => {
             item.value = "";
         })
+        for (let key in state) {
+            delete state[key]
+        }
     }
 
     forms.forEach(item => {
@@ -41,6 +42,12 @@ const formHandler = () => {
             item.appendChild(statusMessage);
 
             const formData = new FormData(item);
+            if (item.getAttribute('data-calc') === 'end') {
+                for (let key in state) {
+                    formData.append(key, state[key]);
+                }
+            }
+
 
             postData('assets/server.php', formData)
                 .then(res => {
@@ -54,6 +61,7 @@ const formHandler = () => {
                     resetInputs()
                     setTimeout(() => {
                         statusMessage.remove()
+                        modal.style.display = "none";
                     }, 2000)
                 })
         })
