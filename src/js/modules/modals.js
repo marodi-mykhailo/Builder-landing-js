@@ -12,8 +12,8 @@ const modals = () => {
                 }
 
                 windows.forEach(item => {
-                    item.style.display = 'none'
-                })
+                    item.style.display = "none";
+                });
 
                 modal.style.display = "block";
                 document.body.classList.add('modal-open')
@@ -44,12 +44,22 @@ const modals = () => {
         });
     }
 
-    function showModalByTime(selector, time) {
-        setTimeout(function () {
-            document.querySelector(selector).style.display = "block";
-            document.body.classList.remove('modal-open')
+    const showModalByTime = (selector, time) => {
+        const modal = document.querySelector(selector)
+        let display;
+        setTimeout(() => {
+            document.querySelectorAll("[data-modal]").forEach(item => {
+                if (getComputedStyle(item).display === "block") {
+                    display = "block";
+                }
+            });
+
+            if (!display) {
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden";
+            }
         }, time);
-    }
+    };
 
     bindModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
     bindModal('.phone_link', '.popup', '.popup .popup_close');
